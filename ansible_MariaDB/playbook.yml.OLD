@@ -1,0 +1,28 @@
+---
+- name: Install and Start DB service
+  hosts: DBserver
+  gather_facts: no
+  vars:
+    mysql_root_password: "soldesk1."
+    mysql_username: "admin"
+    mysql_password: "soldesk1."
+  tasks:
+    - name: Install Mysql
+      yum:
+        name: mysql-server
+        state: present
+    
+    - name: Start Mysql
+      service:
+        name: mysqld
+        enabled: yes
+        state: started
+        #   - name: Install required software
+        # yum:
+        #name: python-mysqldb
+        #state: present
+
+   
+
+        
+    

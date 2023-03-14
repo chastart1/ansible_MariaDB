@@ -1,0 +1,15 @@
+---
+- name: RDS MIgration
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: scp backup file
+      copy:
+        src: ./backup_file_name.sql
+        dest: /home/ansible/backup_file_name.sql
+
+    - name: Migration SQL file
+      shell:
+        cmd: MYSQL_PWD=soldesk1. mysql -h localhost -u root wordpress < backup_file_name.sql
+      
+        

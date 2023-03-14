@@ -1,0 +1,31 @@
+---
+- name: MariaDB server is installed
+  # 1) disable/stop a db service - mariadb
+  # 2) remove package - mariadb-server, python3-PyMySQL
+  hosts: DBserver
+  vars:
+    db_packages:
+      - mariadb-server
+      - python3-PyMySQL
+    db_service: mariadb
+  tasks:
+    - name: disable/stop a db service - mariadb
+      service:
+        name: "{{ db_service }}"
+        state: stopped
+        enabled: no
+      ignore_errors: yes
+
+    - name: remove package - mariadb-server, python3-PyMySQL
+      yum:
+        name: "{{ db_packages }}"
+        state: absent
+    - name: restore firewall CMD
+      ansible.posix.firewalld:
+        port: 3306/tcp
+        permanent: yes
+        state: disabled
+
+    - name: Firewall reload
+      shell:
+        cmd: firewall-cmd --reload

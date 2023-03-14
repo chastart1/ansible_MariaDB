@@ -1,0 +1,49 @@
+---
+- name: Database server is installed
+  hosts: DBserver
+  vars:
+    db_packages:
+      - mariadb-server
+      - python3-PyMySQL
+    db_service: mariadb
+  tasks:
+
+    # 1) 방화벽 설정
+    - name: Permit port 3306/tcp
+      firewalld:
+        port: 3306/tcp
+        permanent: yes
+        state: enabled
+  
+   # 2) 방화벽 Reload
+    - name: firewall reload
+      shell:
+        cmd: firewall-cmd --reload
+
+
+  # 3) 패키지 설치 - mariadb-server, python-PyMySQL
+    - name: "{{ db_packages }} packages are installd."
+      yum:
+        name: "{{ db_packages }}"
+        state: present
+      notify:
+        - set db password
+        
+  # 4) 서비스 기동 - mariadb.service 
+    - name: "Make sure the database service is running"
+      service:
+        name: "{{ db_service }}"
+        state: started
+        enabled: yes
+
+  handlers:
+    - name: restart db service
+      service:
+        name: "{{ db_service }}"
+        state: restarted
+
+    - name: set db password
+      mysql_user:
+        name: root
+        password: soldesk1.
+      
